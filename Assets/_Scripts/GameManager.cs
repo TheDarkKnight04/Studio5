@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class GameManager : SingletonMonoBehavior<GameManager>
 {
     [SerializeField] private int maxLives = 3;
     [SerializeField] private Ball ball;
     [SerializeField] private Transform bricksContainer;
+    [SerializeField] private LivesCounterUI livesCounter;
 
     private int currentBrickCount;
     private int totalBrickCount;
@@ -40,8 +42,18 @@ public class GameManager : SingletonMonoBehavior<GameManager>
     public void KillBall()
     {
         maxLives--;
-        // update lives on HUD here
-        // game over UI if maxLives < 0, then exit to main menu after delay
+        livesCounter.UpdateLives(maxLives);
+
+        if (maxLives == 0) {
+            SceneHandler.Instance.LoadGameOverScene();
+            StartCoroutine(Wait());
+        }
         ball.ResetBall();
+    }
+
+    private IEnumerator Wait()
+    {
+        yield return new WaitForSeconds(2.5f);
+        SceneHandler.Instance.LoadMenuScene();
     }
 }
