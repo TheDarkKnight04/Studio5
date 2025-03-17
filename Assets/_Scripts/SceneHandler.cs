@@ -9,13 +9,14 @@ public class SceneHandler : SingletonMonoBehavior<SceneHandler>
     [Header("Scene Data")]
     [SerializeField] private List<string> levels;
     [SerializeField] private string menuScene;
-    [SerializeField] private string gameOverScene;
+
     [Header("Transition Animation Data")]
     [SerializeField] private Ease menuAnimationType;
     [SerializeField] private Ease gameOverAnimationType;
     [SerializeField] private float animationDuration;
     [SerializeField] private float gameOverAnimationDuration;
     [SerializeField] private RectTransform transitionCanvas;
+    [SerializeField] private RectTransform gameOverCanvas;
 
     private int nextLevelIndex;
     private float initXPosition;
@@ -25,13 +26,14 @@ public class SceneHandler : SingletonMonoBehavior<SceneHandler>
     {
         base.Awake();
         initXPosition = transitionCanvas.transform.localPosition.x;
-        initYPosition = transitionCanvas.transform.localPosition.y;
+        initYPosition = gameOverCanvas.transform.localPosition.y;
         SceneManager.LoadScene(menuScene);
         SceneManager.sceneLoaded += OnSceneLoad;
     }
 
     private void OnSceneLoad(Scene scene, LoadSceneMode _)
     {
+        gameOverCanvas.DOLocalMoveY(initYPosition, gameOverAnimationDuration).SetEase(gameOverAnimationType);
         transitionCanvas.DOLocalMoveX(initXPosition, animationDuration).SetEase(menuAnimationType);
     }
 
@@ -56,10 +58,9 @@ public class SceneHandler : SingletonMonoBehavior<SceneHandler>
         nextLevelIndex = 0;
     }
 
-        public void LoadGameOverScene()
+    public void LoadGameOverScene()
     {
-        transitionCanvas.DOLocalMoveY(initYPosition + transitionCanvas.rect.height, gameOverAnimationDuration).SetEase(gameOverAnimationType);
-        StartCoroutine(LoadSceneAfterTransition(gameOverScene));
+        gameOverCanvas.DOLocalMoveY(initYPosition - gameOverCanvas.rect.height, gameOverAnimationDuration).SetEase(gameOverAnimationType);
     }
     private IEnumerator LoadSceneAfterTransition(string scene)
     {
