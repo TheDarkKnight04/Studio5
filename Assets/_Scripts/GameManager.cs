@@ -52,6 +52,8 @@ public class GameManager : SingletonMonoBehavior<GameManager>
         livesCounter.UpdateLives(maxLives);
 
         if (maxLives == 0) {
+            AudioManager.Instance.StopMusic(); // Stop the ambient music
+            AudioManager.Instance.PlaySound("game-over"); // Play game-over sound
             SceneHandler.Instance.LoadGameOverScene();
             StartCoroutine(Wait());
         }
@@ -62,5 +64,6 @@ public class GameManager : SingletonMonoBehavior<GameManager>
     {
         yield return new WaitForSeconds(2.5f);
         SceneHandler.Instance.LoadMenuScene();
+        AudioManager.Instance.RestartMusicAfterDelay(2.5f);
     }
 }
