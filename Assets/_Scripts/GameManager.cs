@@ -7,9 +7,11 @@ public class GameManager : SingletonMonoBehavior<GameManager>
     [SerializeField] private Ball ball;
     [SerializeField] private Transform bricksContainer;
     [SerializeField] private LivesCounterUI livesCounter;
+    [SerializeField] private ScoreUI scoreCounter;
 
     private int currentBrickCount;
     private int totalBrickCount;
+    public int score = 0;
 
     private void OnEnable()
     {
@@ -35,8 +37,13 @@ public class GameManager : SingletonMonoBehavior<GameManager>
         // implement particle effect here
         // add camera shake here
         currentBrickCount--;
+
+        score++;
+        scoreCounter.UpdateScore(score);
+
         Debug.Log($"Destroyed Brick at {position}, {currentBrickCount}/{totalBrickCount} remaining");
         if(currentBrickCount == 0) SceneHandler.Instance.LoadNextScene();
+
     }
 
     public void KillBall()
